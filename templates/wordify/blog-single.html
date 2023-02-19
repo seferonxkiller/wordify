@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="site-section py-lg">
+        <div class="container">
+            <div class="row blog-entries element-animate">
+                <div class="col-md-12 col-lg-8 main-content">
+                    <img src="{{ object.image.url }}" alt="Image" class="img-fluid mb-5">
+                    <div class="post-meta">
+                    <span class="author mr-2">
+                        {% if author.avatar %}
+                            <img src="{{ author.avatar.url }}" alt="Colorlib" class="mr-2">
+                        {% else %}
+                            <img src="{% static 'images/person_1.jpg' %}" alt="Colorlib" class="mr-2">
+                        {% endif %}
+                        {{ author }}</span>&bullet;
+                        <span class="mr-2">{{ object.created_date|date:'F d, Y' }}</span> &bullet;
+                        <span class="ml-2"><span class="fa fa-comments"></span>{{ object.comments.count }}</span>&bullet;
+                        <span class="ml-2"><span class="fa fa-eye"></span>{{ object.views }}</span>
+                        <span>{{ object.views }}</span>
+                    </div>
+                    <h1 class="mb-4">{{ object.title }}</h1>
+                    {% for tag in object_tags %}
+                        <a class="category mb-5" href="{% url 'blog:list' %}?tag={{ tag }}">{{ tag }}</a>
+                    {% endfor %}
+                    <div class="post-content-body">
+                        {{ object.description|safe }}
+                    </div>
+                    <div class="post-content-body">
+                        <div class="row mb-5">
+                            {% for j in object.subcontent.subimage.all %}
+                                <div class="{% if j.is_white == True %}col-md-12 mb-4{% elif j.is_white == False %}col-md-6 mb-4{% endif %}">
+
+                                    <img src="{{ j.image.url }}" alt="Image placeholder"
+                                         class="img-fluid">
+                                </div>
+
+                            {% endfor %}
+                        </div>
+
+                        <p>{{ object.subcontent|safe }}</p>
+                    </div>
+                    <div class="pt-5">
+                        <p>Categories:
+                                <a href="{% url 'blog:list' %}?cat={{ object.category }}">{{ object.category }}</a>,
+                            Tags:
+                            {% for tag in object.tags.all %}
+                                <a href="{% url 'blog:list' %}?tag={{ tag }}">#{{ tag }}</a>,
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <div class="pt-5" id="comments">
+                        <h3 class="mb-5">{{ object.comment_set.count }} Comments</h3>
+                        <ul class="comment-list">
+                            {% for comment in object.comment_set.all %}
+                                <li class="comment">
+                                    <div class="vcard">
+                                        {% if object.author.avatar %}
+                                            <img src="{{ object.author.avatar.url }}" alt="Image placeholder">
+                                        {% else %}
+                                            <img src="{% static 'images/person_1.jpg' %}" alt="Image placeholder">
+                                        {% endif %}
+                                    </div>
+                                    <div class="comment-body">
+                                        <h3>{{ comment.author }}</h3>
+                                        <div class="meta">{{ comment.created_date|date:'F d, Y' }}
+                                            at {{ comment.created_date|date:'g:ia' }}
+                                        </div>
+                                        <p>{{ comment.description }}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+
+                        <div class="comment-form-wrap pt-5">
+                            <h3 class="mb-5">Leave a comment</h3>
+                            <form method="post" action="#comments" class="p-5 bg-light">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="message">Message</label>
+                                    {{ form.description }}
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Post Comment" class="btn btn-primary">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {% include 'sidebar.html' %}
+
+            </div>
+        </div>
+    </section>
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="mb-3 ">Related Post</h2>
+                </div>
+            </div>
+            <div class="row">
+                {% for object in related_posts %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{% url 'blog:detail' object.slug %}"
+                           class="a-block sm d-flex align-items-center height-md"
+                           style="background-image: url('{{ object.image.url }}'); ">
+                            <div class="text">
+                                <div class="post-meta">
+                                    <span class="category">{{ object.category }}</span>
+                                    <span class="mr-2">{{ object.created_date|date:'F d, Y' }}</span> &bullet;
+                                    <span class="ml-2"><span
+                                            class="fa fa-comments"></span>{{ object.comments.count }}</span>
+                                </div>
+                                <h3>{{ object.title }}</h3>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

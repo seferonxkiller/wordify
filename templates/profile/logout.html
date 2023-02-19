@@ -1,0 +1,15 @@
+{% extends 'profile/auth.html' %}
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+
+    <form method="post" class="login">
+        {% csrf_token %}
+        <h1>Rostdan ham chiqib ketmoqchimisiz</h1>
+        <div>
+            <a class="btn btn-primary" href=" {% url 'blog:list' %}">Yoq</a>
+            <button type="submit" class="btn btn-danger">Ha</button>
+        </div>
+
+    </form>
+{% endblock %}
